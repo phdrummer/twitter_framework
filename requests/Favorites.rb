@@ -21,13 +21,6 @@ class Favorites < TwitterRequest
   def success(response)
     log.info("SUCCESS")
     favorites = JSON.parse(response.body)
-    puts favorites
-    # puts favorites
-    # test = []
-    # for i in 0..favorites.length
-    #   test << favorites[i]["text"]
-    # end
-    # puts test[0]
     log.info("#{favorites.size} favorite tweets received.")
     yield favorites
   end
