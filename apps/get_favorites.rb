@@ -3,7 +3,7 @@ require_relative '../requests/Favorites'
 require 'trollop'
 
 USAGE = %Q{
-get_favorites: Gets all favorited tweets by the given user.
+get_favorites: Gets up to 100 favorited tweets by the given user.
 
 Usage:
   ruby get_favorites.rb <options> <screen_name>
