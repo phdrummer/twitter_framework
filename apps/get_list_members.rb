@@ -10,8 +10,6 @@ Usage:
 
   <owner_screen_name>: The screen name of the list owner.
   <list_slug>: The slug of the list.
-
-The following options are supported:
 }
 
 def parse_command_line
