@@ -30,14 +30,14 @@ class Favorites < MaxIdRequest
   end
 
   def condition
-    @num_success < 16
+    @num_success < 5
   end
 
   def update_condition(tweets)
     if tweets.size > 0
       @num_success += 1
     else
-      @num_success = 16
+      @num_success = 5
     end
   end
 
