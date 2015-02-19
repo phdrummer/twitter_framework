@@ -1,6 +1,6 @@
-require_relative '../core/TwitterRequest'
+require_relative '../core/MaxIdRequest'
 
-class Favorites < TwitterRequest
+class Favorites < MaxIdRequest
 
   def initialize(args)
     super args
@@ -23,6 +23,22 @@ class Favorites < TwitterRequest
     favorites = JSON.parse(response.body)
     log.info("#{favorites.size} favorite tweets received.")
     yield favorites
+  end
+
+  def init_condition
+    @num_success = 0
+  end
+
+  def condition
+    @num_success < 16
+  end
+
+  def update_condition(tweets)
+    if tweets.size > 0
+      @num_success += 1
+    else
+      @num_success = 16
+    end
   end
 
 end
