@@ -4,6 +4,8 @@ class Favorites < MaxIdRequest
 
   def initialize(args)
     super args
+    params[:count] = 200
+    @count = 0
   end
 
   def request_name
@@ -21,24 +23,22 @@ class Favorites < MaxIdRequest
   def success(response)
     log.info("SUCCESS")
     favorites = JSON.parse(response.body)
+    @count += favorites.size
     log.info("#{favorites.size} favorite tweets received.")
+    log.info("#{@count} total tweet(s) received.")
     yield favorites
   end
 
   def init_condition
-    @num_success = 0
+    @last_count = 1
   end
 
   def condition
-    @num_success < 5
+    @last_count > 0
   end
 
   def update_condition(tweets)
-    if tweets.size > 0
-      @num_success += 1
-    else
-      @num_success = 5
-    end
+    @last_count = tweets.size
   end
 
 end
