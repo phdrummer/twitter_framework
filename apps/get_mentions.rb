@@ -6,11 +6,11 @@ USAGE = %Q{
 get_mentions: Retrieve most recent mentions for a given Twitter screen_name.
 
 Usage:
-  ruby get_mentions.rb <options> <screen_name>
+  ruby /PATH/get_mentions.rb <options> <trim_user>
 
-  <screen_name>: A Twitter screen_name.
-
-The following options are supported:
+  <trim_user>: When set to either true, t or 1, each tweet 
+      returned in a timeline will include a user object 
+      including only the status authors numerical ID.
 }
 
 def parse_command_line
@@ -18,7 +18,7 @@ def parse_command_line
   options = {type: :string, required: true}
 
   opts = Trollop::options do
-    version "get_mentions 0.1 (c) 2015 Kenneth M. Anderson"
+    version "get_mentions 0.1 (c) 2015 Edward Zhu"
     banner USAGE
     opt :props, "OAuth Properties File", options
   end
@@ -27,7 +27,7 @@ def parse_command_line
     Trollop::die :props, "must point to a valid oauth properties file"
   end
 
-  opts[:screen_name] = ARGV[0]
+  opts[:trim_user] = ARGV[0]
   opts
 end
 
@@ -36,14 +36,14 @@ if __FILE__ == $0
   STDOUT.sync = true
 
   input  = parse_command_line
-  params = { screen_name: input[:screen_name] }
+  params = { trim_user: input[:trim_user] }
   data   = { props: input[:props] }
 
   args     = { params: params, data: data }
 
   twitter = MentionsTimeline.new(args)
 
-  puts "Collecting most recent mentions for '#{input[:screen_name]}'"
+  puts "Collecting most recent mentions of myself. Trimming mentions:'#{input[:trim_user]}'"
 
   File.open('mentions.json', 'w') do |f|
     twitter.collect do |mentions|
