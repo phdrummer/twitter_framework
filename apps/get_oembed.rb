@@ -53,9 +53,9 @@ if __FILE__ == $0
 
   puts "Getting HTML for tweet id '#{input[:id]}'"
 
-  File.open('tweet.json', 'w') do |f|
+  File.open('tweet.html', 'w') do |f|
     tweet.collect do |tweet|
-      f.puts "#{tweet.to_json}\n"
+      f.puts "#{tweet}\n"
     end
   end
 
