@@ -4,7 +4,7 @@ class MentionsTimeline < MaxIdRequest
 
   def initialize(args)
     super args
-    params[:count] = 20
+    params[:count] = 200
     @count = 0
   end
 
