@@ -17,7 +17,7 @@ def parse_command_line
   options = {type: :string, required: true}
 
   opts = Trollop::options do
-    version "get_list_members 0.1 (c) 2015 David Aragon"
+    version "get_list_members 0.1 (c) 2015 Kenneth M. Anderson; Updated by David Aragon"
     banner USAGE
     opt :props, "OAuth Properties File", options
   end
