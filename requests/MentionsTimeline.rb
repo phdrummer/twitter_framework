@@ -24,25 +24,21 @@ class MentionsTimeline < MaxIdRequest
     log.info("SUCCESS")
     mentions = JSON.parse(response.body)
     @count += mentions.size
-    log.info("#{mentions.size} mention(s) received.")
-    log.info("#{@count} total mention(s) received.")
+    log.info("#{mentions.size} mention tweets received.")
+    log.info("#{@count} total tweet(s) received.")
     yield mentions
   end
 
   def init_condition
-    @num_success = 0
+    @last_count = 1
   end
 
   def condition
-    @num_success < 16
+    @last_count > 0
   end
 
-  def update_condition(mentions)
-    if mentions.size > 0
-      @num_success += 1
-    else
-      @num_success = 16
-    end
+  def update_condition(tweets)
+    @last_count = tweets.size
   end
 
 end
