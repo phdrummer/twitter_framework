@@ -7,32 +7,28 @@ users_lookup: returns list of users for given list of user_id's or screen_names'
 
 Usage:
 
-  ruby users_lookup.rb <options> <user_ids/sceen_names>
-  ruby users_lookup.rb <options> screen_name:<screen_names>
-  ruby users_lookup.rb <options> user_id:<user_ids>
+  ruby users_lookup.rb <options> [user_ids|sceen_names]
+  ruby users_lookup.rb <options> screen_names:<screen_names>
+  ruby users_lookup.rb <options> user_ids:<user_ids>
 
-  You may specify 'screen_name:' or 'user_id:' before the argument list
-  If you don't, the script will make assume one or the other.
-  This assumption will fail if you are aiming for screen_names, but the first in the list is all numbers
-  It will incorrectly assume this is a uid.
+  <user_ids>    : A comma-separated list of Twitter User IDs.
+  <screen_names>: A comma-separated list of Twitter Screen Names.
 
-  Note: Twitter allows the user to use one or the other or both.
-        This script only allows screen_name or user_id explicitly per call.
+  You may specify 'screen_names:' or 'user_ids:' before the argument list
+
+  If you don't, the script will attempt to automatically detect the
+  type of information passed to it. If the first item in the list
+  if a number, the script will assume that you are passing
+  user_ids. Otherwise, it will assume that you are passing
+  screen names.
 
   Examples:
-  ~$ ruby users_lookup.rb --props=path_to/oauth.properties 1234,12345,etc...
-  ~$ ruby users_lookup.rb --props=path_to/oauth.properties _maxharris,kenbod,etc... 
+  $ ruby users_lookup.rb -p path_to/oauth.properties 1234,12345,...
+  $ ruby users_lookup.rb -p path_to/oauth.properties _maxharris,kenbod,... 
 
-  script will automatically detect wether you are passing uids or screen_names,
-  doesn't work if the first screen_name in the argument list is all numbers (some are),
-  the script will incorrectly assume it is a uid.
-
-  <user_id>: A comma-separated list of User IDs.
-  <screen_name>: A comma-separated list of User Screen Name
 
 The following options are required:
 
-  --params: An OAuth Properties File
 }
 
 def parse_command_line
@@ -43,7 +39,6 @@ def parse_command_line
     version "users_lookup 0.1 (c) 2015 Kenneth M. Anderson; Updated by Max Harris"
     banner USAGE
     opt :props, "OAuth Properties File", options
-    opt :identifiers, "User Screen Names or ids"
   end
 
   unless File.exist?(opts[:props])
@@ -51,13 +46,41 @@ def parse_command_line
   end
 
   opts[:identifiers] = ARGV[0]
-  puts opts[:identifiers]
 
   if opts[:identifiers] == nil
-    Trollop::die :props, "must specify at least 1 user_id or screen_name"
+    Trollop::die "must specify at least one user_id or screen_name"
   end
 
   opts
+end
+
+def unknown_error
+  puts "ERROR: Unknown input list format."
+  exit 1
+end
+
+def parse_identifiers(input_list)
+  split_array = input_list.split(':')
+
+  if split_array.size == 2
+    list_type = split_array.first
+    ids       = split_array.last
+
+    if list_type == "user_ids" || list_type == "screen_names"
+      return [list_type, ids]
+    end
+  elsif split_array.size == 1
+    ids        = split_array.first
+    components = ids.split(',')
+    if components.first.to_i.to_s.size == components.first.size
+      return ["user_ids", ids]
+    else
+      return ["screen_names", ids]
+    end
+  end
+
+  unknown_error
+
 end
 
 if __FILE__ == $0
@@ -65,25 +88,21 @@ if __FILE__ == $0
   STDOUT.sync = true
 
   input  = parse_command_line
-  # check if it's a screen name vs an id using a little ruby magic
-  if input[:identifiers].split(":").first == "user_id"
-    params = { user_id: input[:identifiers].split(":")[1] }
+  ids    = parse_identifiers(input[:identifiers])
 
-  elsif input[:identifiers].split(":").first == "screen_name"
-    params = { screen_name: input[:identifiers].split(":")[1] }
-
-  elsif(input[:identifiers].split(",").first.to_i.to_s.size == input[:identifiers].split(",").first.size)
-    params = { user_id: input[:identifiers] } 
-
+  if ids[0] == "user_ids"
+    params = { user_id: ids[1] }
+    msg    = "Retrieving user objects for user_ids: #{ids[1]}"
   else
-    params = { screen_name: input[:identifiers] } 
+    params = { screen_name: ids[1] }
+    msg    = "Retrieving user objects for screen_names: #{ids[1]}"
   end
+
   data   = { props: input[:props] }
   args   = { params: params, data: data }
 
   users_data = UsersLookup.new(args)
-  puts "Retrieving users for user_id #{params[:user_id]}" if !params[:user_id].nil?
-  puts "Retrieving users for screen_name #{params[:screen_name]}" if !params[:screen_name].nil?
+  puts msg
 
   users_data.collect do |user|
     puts "#{user}\n"
