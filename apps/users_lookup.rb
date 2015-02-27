@@ -8,6 +8,17 @@ users_lookup: returns list of users for given list of user_id's or screen_names'
 Usage:
 
   ruby users_lookup.rb <options> <user_ids/sceen_names>
+  actual twitter framework allows specifying both, however
+  this script only allows a comma-separated list of one
+  or the other.
+
+  ~$ ruby users_lookup.rb --props=path_to/oauth.properties 1234,12345,etc...
+  or
+  ~$ ruby users_lookup.rb --props=path_to/oauth.properties _maxharris,kenbod,etc... 
+
+  script will automatically detect wether you are passing uids or screen_names,
+  doesn't work if the first screen_name in the argument list is all numbers (some are),
+  the script will incorrectly assume it is a uid.
 
   <user_id>: A comma-separated list of User IDs.
   <screen_name>: A comma-separated list of User Screen Name
@@ -49,9 +60,9 @@ if __FILE__ == $0
   input  = parse_command_line
   # check if it's a screen name vs an id using a little ruby magic
   if (input[:identifiers].split(",").first.to_i.to_s.size == input[:identifiers].split(",").first.size)
-    params = { user_id: input[:identifiers] }
+    params = { user_id: input[:identifiers] } 
   else
-    params = { screen_name: input[:identifiers] }
+    params = { screen_name: input[:identifiers] } 
   end
   data   = { props: input[:props] }
   args   = { params: params, data: data }
