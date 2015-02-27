@@ -47,7 +47,7 @@ if __FILE__ == $0
   STDOUT.sync = true
 
   input  = parse_command_line
-  # check if it's a screen name vs an id
+  # check if it's a screen name vs an id using a little ruby magic
   if (input[:identifiers].split(",").first.to_i.to_s.size == input[:identifiers].split(",").first.size)
     params = { user_id: input[:identifiers] }
   else
