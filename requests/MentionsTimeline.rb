@@ -16,6 +16,15 @@ class MentionsTimeline < MaxIdRequest
     "/statuses/mentions_timeline"
   end
 
+  def include_param?(param)
+    return super if param != :trim_user
+    value = params[param]
+    return true if value == "true"
+    return true if value == "t"
+    return true if value == "1"
+    return false
+  end
+
   def url
     'https://api.twitter.com/1.1/statuses/mentions_timeline.json'
   end
