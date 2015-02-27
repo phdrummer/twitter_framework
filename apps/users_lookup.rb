@@ -8,12 +8,19 @@ users_lookup: returns list of users for given list of user_id's or screen_names'
 Usage:
 
   ruby users_lookup.rb <options> <user_ids/sceen_names>
-  actual twitter framework allows specifying both, however
-  this script only allows a comma-separated list of one
-  or the other.
+  ruby users_lookup.rb <options> screen_name:<screen_names>
+  ruby users_lookup.rb <options> user_id:<user_ids>
 
+  You may specify 'screen_name:' or 'user_id:' before the argument list
+  If you don't, the script will make assume one or the other.
+  This assumption will fail if you are aiming for screen_names, but the first in the list is all numbers
+  It will incorrectly assume this is a uid.
+
+  Note: Twitter allows the user to use one or the other or both.
+        This script only allows screen_name or user_id explicitly per call.
+
+  Examples:
   ~$ ruby users_lookup.rb --props=path_to/oauth.properties 1234,12345,etc...
-  or
   ~$ ruby users_lookup.rb --props=path_to/oauth.properties _maxharris,kenbod,etc... 
 
   script will automatically detect wether you are passing uids or screen_names,
@@ -47,7 +54,7 @@ def parse_command_line
   puts opts[:identifiers]
 
   if opts[:identifiers] == nil
-    Trollop::die :props, "must specify at least 1 screen_name"
+    Trollop::die :props, "must specify at least 1 user_id or screen_name"
   end
 
   opts
@@ -59,8 +66,15 @@ if __FILE__ == $0
 
   input  = parse_command_line
   # check if it's a screen name vs an id using a little ruby magic
-  if (input[:identifiers].split(",").first.to_i.to_s.size == input[:identifiers].split(",").first.size)
+  if input[:identifiers].split(":").first == "user_id"
+    params = { user_id: input[:identifiers].split(":")[1] }
+
+  elsif input[:identifiers].split(":").first == "screen_name"
+    params = { screen_name: input[:identifiers].split(":")[1] }
+
+  elsif(input[:identifiers].split(",").first.to_i.to_s.size == input[:identifiers].split(",").first.size)
     params = { user_id: input[:identifiers] } 
+
   else
     params = { screen_name: input[:identifiers] } 
   end
