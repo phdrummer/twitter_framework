@@ -9,20 +9,13 @@ Signal.trap(:INT) do
 end
 
 USAGE = %Q{
-destroy_friendship: Allows the authenticating user to unfollow the user specified in the ID parameter.
+destroy friendships: Submit a screen_name name to unfollow them/ 
 
 Usage:
-  ruby destroy_friendship.rb <options> <user>
+  ruby destroy_friendship.rb <options> <terms>
 
-  terms: The name of a file containing search terms, one per line.
+  terms: The name of a file containing usernames you want to unfollow, one per line.
 
-  The terms must match the requirements documented here:
-    https://dev.twitter.com/rest/reference/post/friendships/destroy
-
-The following options are supported: 
-
--u : if you want to input a user_id
--s : if you want to input a screen_name
 }
 
 def parse_command_line
@@ -30,7 +23,7 @@ def parse_command_line
   options = {type: :string, required: true}
 
   opts = Trollop::options do
-    version "public_stream 0.1 (c) 2015 Kenneth M. Anderson"
+    version "destroy_friendship 0.1 (c) 2015 Alex Tsankov"
     banner USAGE
     opt :props, "OAuth Properties File", options
   end
@@ -39,9 +32,22 @@ def parse_command_line
     Trollop::die :props, "must point to a valid oauth properties file"
   end
 
+  opts[:terms] = ARGV[0]
+
+  unless File.exist?(opts[:terms])
+    Trollop::die "'#{opts[:terms]}' must point to a file containing screen_names terms."
+  end
+
   opts
 end
 
+def load_terms(input_file)
+  terms = []
+  IO.foreach(input_file) do |term|
+    terms << term.chomp
+  end
+  terms
+end
 
 if __FILE__ == $0
 
@@ -49,13 +55,27 @@ if __FILE__ == $0
 
   input  = parse_command_line
 
-  data   = { props: input[:props], user: load_terms(input[:user]) }
+  data   = { props: input[:props], terms: load_terms(input[:terms]) }
 
   args   = { params: {}, data: data }
 
-  twitter = FilterTrackStream.new(args)
+  twitter = DestroyFriendship.new(args)
 
-  puts "Unfollowing users with the following ids/user_names: "
+  #Todo: Figure out what to remove
+
+  puts "Starting connection to Twitter's Public Streaming API."
+  puts "Looking for Tweets containing the following terms:"
   puts data[:terms]
+
+  File.open('streaming_tweets.json', 'w') do |f|
+    twitter.collect do |tweet|
+      f.puts "#{tweet.to_json}\n"
+      puts "#{tweet["text"]}" if tweet.has_key?("text")
+      if !$continue
+        f.flush
+        twitter.request_shutdown
+      end
+    end
+  end
 
 end
