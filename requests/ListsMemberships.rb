@@ -19,7 +19,7 @@ class ListsMemberships < TwitterRequest
   end
 
   def success(response)
-    lists =  JSON.parse(response.body)['lists']
+    lists = JSON.parse(response.body)['lists']
     yield lists
   end
 
