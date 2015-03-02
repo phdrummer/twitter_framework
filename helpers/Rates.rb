@@ -28,7 +28,7 @@ module TwitterRates
   end
 
   def resource_from_endpoint
-    pattern = /^\/(?<resource>\w+)\/\w+$/
+    pattern = /^\/(?<resource>\w+)(\/[:\w]+)*$/
     data    = pattern.match(twitter_endpoint)
     data[:resource]
   end
