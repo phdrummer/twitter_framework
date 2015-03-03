@@ -1,14 +1,12 @@
-require_relative '../requests/Searches'
+require_relative '../requests/DirectMessages'
 
 require 'trollop'
 
 USAGE = %Q{
-get_friends: Retrieve user ids followed by a given Twitter screen_name.
+get_friends: Retrieve directMessages preceded by username.
 
 Usage:
-  ruby get_friends.rb <options> <screen_name>
-
-  <screen_name>: A Twitter screen_name.
+  ruby get_dms.rb <options>
 
 The following options are supported:
 }
@@ -18,7 +16,7 @@ def parse_command_line
   options = {type: :string, required: true}
 
   opts = Trollop::options do
-    version "get_saved_searches 0.1 (c) 2015 Phil Leonowens"
+    version "get_dms 0.1 (c) 2015 Phil Leonowens"
     banner USAGE
     opt :props, "OAuth Properties File", options
   end
@@ -36,19 +34,19 @@ if __FILE__ == $0
   STDOUT.sync = true
 
   input  = parse_command_line
-  params = { screen_name: input[:screen_name] }
   data   = { props: input[:props] }
-
+  params = {}
   args     = { params: params, data: data }
 
-  twitter = Searches.new(args)
+  twitter = DirectMessages.new(args)
 
-  puts "Collecting the ids of the Twitter users followed by '#{input[:screen_name]}'"
+  puts "Collecting your direct messages"
 
-  File.open('saved_searches.txt', 'w') do |f|
+  File.open('dms.txt', 'w') do |f|
     twitter.collect do |searches|
       searches.each do |search|
-        f.puts "#{search}\n"
+        f.puts "#{search['sender_screen_name']}\n"
+        f.puts "#{search['text']}\n"
       end
     end
   end
