@@ -2,3 +2,4 @@ oauth.properties
 *.json
 *.txt
 *.html
+output
