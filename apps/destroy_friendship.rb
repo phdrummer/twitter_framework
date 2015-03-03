@@ -12,9 +12,8 @@ USAGE = %Q{
 destroy friendships: Submit a screen_name name to unfollow them/ 
 
 Usage:
-  ruby destroy_friendship.rb <options> <terms>
 
-  terms: The name of a file containing usernames you want to unfollow, one per line.
+ruby destroy_friendship.rb  --props oauth.properties <screen_name>
 
 }
 
@@ -37,15 +36,6 @@ def parse_command_line
 end
 
 
-def load_terms(input_file)
-  terms = []
-  IO.foreach(input_file) do |term|
-    terms << term.chomp
-  end
-  terms
-end
-
-
 
 if __FILE__ == $0
 
@@ -59,15 +49,13 @@ if __FILE__ == $0
 
   twitter = DestroyFriendship.new(args)
 
-  puts "Unfllowing: '#{input[:screen_name]}'"
+  puts "Unfollowing: '#{input[:screen_name]}'"
 
-  File.open('user.json', 'w') do |f|
+  File.open('unfollowed_users.json', 'w') do |f|
     twitter.collect do |user|
       f.puts "#{user.to_json}\n"
     end
   end
-
-  puts "DONE."
 
 end
 

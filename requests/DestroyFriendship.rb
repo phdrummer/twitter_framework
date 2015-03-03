@@ -44,7 +44,6 @@ class DestroyFriendship < TwitterRequest
       request_params[key] = escaped_params[key] if include_param?(key)
     end
     options[:params]  = request_params
-    puts options
     options
   end
 
