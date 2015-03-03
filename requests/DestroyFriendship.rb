@@ -1,4 +1,4 @@
-require_relative '../core/StreamingTwitterRequest'
+require_relative '../core/TwitterRequest'
 
 class DestroyFriendship < TwitterRequest
 
@@ -19,40 +19,14 @@ class DestroyFriendship < TwitterRequest
     yield JSON.parse(response.body)
   end
 
-  def body
-    body = "screen_name=" + prepare_terms.join(",")
-    puts body 
-    body
-  end
-
-  def prepare_terms
-    data[:terms].map { |term| prepare(term) }
-  end
-
   def authorization
     header = SimpleOAuth::Header.new("POST", url, escaped_params, props)
     { 'Authorization' => header.to_s }
   end
 
-  def make_request
-    #check_rates
-    request = Typhoeus::Request.new(url, options)
-    log.info("REQUESTING: #{request.base_url}?#{display_params}")
-    response = request.run
-    #@rate_count = @rate_count - 1
-    response
-  end
-
   def options
-    options = {}
+    options = super
     options[:method]  = :post
-    options[:headers] = authorization
-
-    request_params = {}
-    escaped_params.keys.each do |key|
-      request_params[key] = escaped_params[key] if include_param?(key)
-    end
-    options[:params]  = request_params
     options
   end
 

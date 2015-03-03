@@ -34,13 +34,21 @@ module TwitterRates
   end
 
   def twitter_window
-    info = @@rates[resource_from_endpoint][twitter_endpoint]
-    Time.at(info['reset']) + 10
+    begin
+      info = @@rates[resource_from_endpoint][twitter_endpoint]
+      Time.at(info['reset']) + 10
+    rescue
+      Time.now + 10 # if endpoint doesn't exist, then never refresh
+    end
   end
 
   def twitter_calls_remaining
-    info = @@rates[resource_from_endpoint][twitter_endpoint]
-    info['remaining']
+    begin
+      info = @@rates[resource_from_endpoint][twitter_endpoint]
+      info['remaining']
+    rescue
+      15 # if endpoint doesn't exist, then assume 15
+    end
   end
 
   def check_rates

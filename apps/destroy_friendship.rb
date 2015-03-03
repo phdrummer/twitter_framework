@@ -2,19 +2,14 @@ require_relative '../requests/DestroyFriendship'
 
 require 'trollop'
 
-$continue = true
-
-Signal.trap(:INT) do
-  $continue = false
-end
-
 USAGE = %Q{
-destroy friendships: Submit a screen_name name to unfollow them/ 
+destroy friendships: Unfollow the given screen_name
 
 Usage:
 
-ruby destroy_friendship.rb  --props oauth.properties <screen_name>
+  ruby destroy_friendship.rb --props oauth.properties <screen_name>
 
+The following options are supported:
 }
 
 def parse_command_line
@@ -22,7 +17,7 @@ def parse_command_line
   options = {type: :string, required: true}
 
   opts = Trollop::options do
-    version "destroy_friendship 0.1 (c) 2015 Alex Tsankov"
+    version "destroy_friendship 0.1 (c) 2015 Kenneth M. Anderson; Updated by Alex Tsankov"
     banner USAGE
     opt :props, "OAuth Properties File", options
   end
@@ -34,8 +29,6 @@ def parse_command_line
   opts[:screen_name] = ARGV[0]
   opts
 end
-
-
 
 if __FILE__ == $0
 
@@ -51,12 +44,8 @@ if __FILE__ == $0
 
   puts "Unfollowing: '#{input[:screen_name]}'"
 
-  File.open('unfollowed_users.json', 'w') do |f|
-    twitter.collect do |user|
-      f.puts "#{user.to_json}\n"
-    end
+  twitter.collect do |user|
+    puts "#{user['screen_name']} with id '#{user['id']}' unfollowed."
   end
 
 end
-
-
