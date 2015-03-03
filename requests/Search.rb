@@ -41,5 +41,4 @@ class Search < MaxIdRequest
     @last_count = tweets.size
   end
 
-
 end
