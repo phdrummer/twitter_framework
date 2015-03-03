@@ -32,14 +32,10 @@ def parse_command_line
     Trollop::die :props, "must point to a valid oauth properties file"
   end
 
-  opts[:terms] = ARGV[0]
-
-  unless File.exist?(opts[:terms])
-    Trollop::die "'#{opts[:terms]}' must point to a file containing screen_names terms."
-  end
-
+  opts[:screen_name] = ARGV[0]
   opts
 end
+
 
 def load_terms(input_file)
   terms = []
@@ -49,33 +45,30 @@ def load_terms(input_file)
   terms
 end
 
+
+
 if __FILE__ == $0
 
   STDOUT.sync = true
 
   input  = parse_command_line
+  params = { screen_name: input[:screen_name] }
+  data   = { props: input[:props] }
 
-  data   = { props: input[:props], terms: load_terms(input[:terms]) }
-
-  args   = { params: {}, data: data }
+  args     = { params: params, data: data }
 
   twitter = DestroyFriendship.new(args)
 
-  #Todo: Figure out what to remove
+  puts "Unfllowing: '#{input[:screen_name]}'"
 
-  puts "Starting connection to Twitter's Public Streaming API."
-  puts "Looking for Tweets containing the following terms:"
-  puts data[:terms]
-
-  File.open('streaming_tweets.json', 'w') do |f|
-    twitter.collect do |tweet|
-      f.puts "#{tweet.to_json}\n"
-      puts "#{tweet["text"]}" if tweet.has_key?("text")
-      if !$continue
-        f.flush
-        twitter.request_shutdown
-      end
+  File.open('user.json', 'w') do |f|
+    twitter.collect do |user|
+      f.puts "#{user.to_json}\n"
     end
   end
 
+  puts "DONE."
+
 end
+
+
