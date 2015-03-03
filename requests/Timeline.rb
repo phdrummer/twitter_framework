@@ -30,19 +30,15 @@ class Timeline < MaxIdRequest
   end
 
   def init_condition
-    @num_success = 0
+    @last_count = 1
   end
 
   def condition
-    @num_success < 16
+    @last_count > 0
   end
 
   def update_condition(tweets)
-    if tweets.size > 0
-      @num_success += 1
-    else
-      @num_success = 16
-    end
+    @last_count = tweets.size
   end
 
 end
