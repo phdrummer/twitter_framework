@@ -44,12 +44,11 @@ end
 
 
 def parse_identifiers(input)
-    if input.to_i.to_s.size == input.size #check if number
-      return ["user_id", input]
-    else
-      return ["screen_name", input]
-    end
-
+  if input.to_i.to_s.size == input.size #check if number
+    return ["user_id", input]
+  else
+    return ["screen_name", input]
+  end
 end
 
 if __FILE__ == $0
@@ -65,16 +64,15 @@ if __FILE__ == $0
     params = { screen_name: id[1] }
   end
 
-  data   = { props: input[:props] }
+  data   = { props: input[:props], user: id[1] }
   args   = { params: params, data: data }
 
   users_data = UsersShow.new(args)
-  puts "GETing user #{args[:params]}"
+  puts "Getting data for User '#{id[1]}'"
 
   users_data.collect do |user|
     puts "#{user}\n"
   end
-
 
   puts "DONE."
 end

@@ -2,10 +2,6 @@ require_relative '../core/TwitterRequest'
 
 class UsersShow < TwitterRequest
 
-  def initialize(args)
-    super args
-  end
-
   def request_name
     "UsersShow"
   end
@@ -18,20 +14,16 @@ class UsersShow < TwitterRequest
     'https://api.twitter.com/1.1/users/show.json'
   end
 
-  def escaped_params
-    params
-  end
-
   def success(response)
     log.info("SUCCESS")
     users_data = JSON.parse(response.body)
-    log.info("users data received.")
+    log.info("Data for User '#{data[:user]}' Received.")
     yield users_data
   end
 
   def error(response)
     if response.code == 404
-      puts "No users found"
+      puts "No user found"
       return
     end
     super
