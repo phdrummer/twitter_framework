@@ -9,15 +9,16 @@ class Search < MaxIdRequest
   end
 
   def request_name
-    "Search"
+    "Searches"
   end
 
   def twitter_endpoint
-    "/search/tweets"
+    '/saved_searches/list'
+
   end
 
   def url
-    'https://api.twitter.com/1.1/search/tweets.json'
+    'https://api.twitter.com/1.1/saved_searches/list.json'
   end
 
   def success(response)

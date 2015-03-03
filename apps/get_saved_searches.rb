@@ -18,7 +18,7 @@ def parse_command_line
   options = {type: :string, required: true}
 
   opts = Trollop::options do
-    version "get_friends 0.1 (c) 2015 Kenneth M. Anderson"
+    version "get_saved_searches 0.1 (c) 2015 Phil Leonowens"
     banner USAGE
     opt :props, "OAuth Properties File", options
   end
@@ -41,14 +41,14 @@ if __FILE__ == $0
 
   args     = { params: params, data: data }
 
-  twitter = FriendsIds.new(args)
+  twitter = Searches.new(args)
 
   puts "Collecting the ids of the Twitter users followed by '#{input[:screen_name]}'"
 
-  File.open('friend_ids.txt', 'w') do |f|
-    twitter.collect do |ids|
-      ids.each do |id|
-        f.puts "#{id}\n"
+  File.open('saved_searches.txt', 'w') do |f|
+    twitter.collect do |searches|
+      searches.each do |search|
+        f.puts "#{search}\n"
       end
     end
   end
