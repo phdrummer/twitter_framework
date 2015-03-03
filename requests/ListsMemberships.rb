@@ -4,6 +4,8 @@ class ListsMemberships < TwitterRequest
 
   def initialize(args)
     super args
+    params[:count] = 1000
+    @count = 0
   end
 
   def request_name
@@ -20,6 +22,9 @@ class ListsMemberships < TwitterRequest
 
   def success(response)
     lists = JSON.parse(response.body)['lists']
+    @count += lists.size
+    log.info("#{lists.size} list(s) received.")
+    log.info("#{@count} total list(s) received.")
     yield lists
   end
 

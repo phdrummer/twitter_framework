@@ -3,7 +3,8 @@ require_relative '../requests/ListsMemberships'
 require 'trollop'
 
 USAGE = %Q{
-get_lists_memberships: Retrieve lists that a given Twitter screen_name is subscribed to.
+get_lists_memberships: Retrieve lists that a given Twitter
+                       screen_name is subscribed to.
 
 Usage:
   ruby get_lists_memberships.rb <options> <screen_name>
@@ -18,7 +19,7 @@ def parse_command_line
   options = {type: :string, required: true}
 
   opts = Trollop::options do
-    version "get_lists_memberships 0.1 (c) 2015 Justin McBride"
+    version "get_lists_memberships 0.1 (c) 2015 Kenneth M. Anderson; Updated by Justin McBride"
     banner USAGE
     opt :props, "OAuth Properties File", options
   end
@@ -36,10 +37,9 @@ if __FILE__ == $0
   STDOUT.sync = true
 
   input  = parse_command_line
-  params = { screen_name: input[:screen_name], count: 1000 }
+  params = { screen_name: input[:screen_name] }
   data   = { props: input[:props] }
-
-  args     = { params: params, data: data }
+  args   = { params: params, data: data }
 
   twitter = ListsMemberships.new(args)
 
