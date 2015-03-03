@@ -68,11 +68,11 @@ class TwitterRequest
   end
 
   def make_request
-    #check_rates
+    check_rates
     request = Typhoeus::Request.new(url, options)
     log.info("REQUESTING: #{request.base_url}?#{display_params}")
     response = request.run
-    #@rate_count = @rate_count - 1
+    @rate_count = @rate_count - 1
     response
   end
 
