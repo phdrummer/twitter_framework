@@ -21,7 +21,6 @@ module TwitterRates
   end
 
   def refresh_rates
-    puts url
     request     = Typhoeus::Request.new(rate_url, rate_options)
     response    = request.run
     @@rates     = JSON.parse(response.body)['resources']
