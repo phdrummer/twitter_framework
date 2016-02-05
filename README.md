@@ -6,9 +6,6 @@ This is the start of a framework for accessing data from Twitter's
 REST and Streaming APIs. It comes with several example applications
 that demonstrate how to make use of the framework.
 
-This framework was created by Prof. Ken Anderson of the Department of
-Computer Science at the University of Colorado Boulder.
-
 ## Installation
 
 To install the framework:
@@ -57,7 +54,6 @@ Department of Computer Science at the University of Colorado Boulder.
 
 ## License
 
-Copyright (c) 2015 Kenneth M. Anderson
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files
